@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, target-densitydpi=device-dpi">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="true"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <meta name="360-fullscreen" content="true"/>
+    <title>本食的吃货</title>
+    <script src="./bower_components/easeljs/lib/easeljs-0.8.0.min.js"></script>
+    <script src="./bower_components/preloadjs/dist/preloadjs-0.6.0.min.js"></script>
+</head>
+<body>
+<canvas id="gameStage"></canvas>
+<script>
+
+    // screen adapt
+    var canvas = document.getElementById("gameStage");
+    var designWidth = 750;
+    var designHeight = 1270;
+
+    // view area
+    var viewWidth = document.documentElement.clientWidth;
+    var viewHeight = document.documentElement.clientHeight;
+
+    var scale = viewWidth / designWidth;
+
+    canvas.width = viewWidth;
+    canvas.height = viewHeight / scale;
+    canvas.style.width = viewWidth + "px";
+    canvas.style.height = viewHeight + "px";
+
+    // game
+    var stage = new createjs.Stage(canvas);
+
+    // init
+    goToMenu = function() {
+        stage.removeAllChildren();
+        stage.addChild(playingBackground);
+        stage.addChild(menuBackground);
+        stage.addChild(startButton);
+        state = "menu";
+    };
+    // play
+    goToPlay = function() {
+        totalPoint = 0;
+        stage.removeAllChildren();
+        stage.addChild(playingBackground);
+        stage.addChild(totalPointDisplay);
+        state = "playing";
+    };
+
+    // state:
+    //      menu
+    //      playing
+    var state = "menu";
+
+
+    // menu
+    var playingBackground = new createjs.Bitmap("./playing-background.png");
+    playingBackground.name = "playing-background";
+    var menuBackground = new createjs.Bitmap("./menu-background.png");
+    menuBackground.name = "menu-background";
+
+    var gameName = new createjs.Text("本食的吃货", "bold 70px comic sans", "#ffffff");
+    gameName.x = 100;
+    gameName.y = 80;
+    gameName.regX = -100;
+    gameName.regY = -150;
+    gameName.textBaseline = "alphabetic";
+
+    var startButton = new createjs.Bitmap("./辣椒.png");
+    startButton.x = 100;
+    startButton.y = 80;
+    startButton.regX = -200;
+    startButton.regY = -1000;
+    startButton.addEventListener("click", function () {
+        goToPlay();
+    });
+
+    var foodList = [
+        new createjs.Bitmap("./油炸芒果.png"),
+        new createjs.Bitmap("./大排.png"),
+        new createjs.Bitmap("./大块肉.png"),
+        new createjs.Bitmap("./辣椒.png"),
+    ];
+
+    var totalPoint = 0;
+    var totalPointDisplay = new createjs.Text("总得分: 0", "bold 50px comic sans", "#ffffff");
+    totalPointDisplay.rexX = -200;
+    totalPointDisplay.regY = -1000;
+    totalPointDisplay.x = 400;
+    totalPointDisplay.y = 200;
+    foodList[0].point = 5;
+    foodList[1].point = 2;
+    foodList[2].point = 3;
+
+    goToMenu();
+
+    // game loop
+    var nextFood = 0;
+    createjs.Ticker.addEventListener("tick", function () {
+        if (state === "menu") {
+
+            // pass
+        }
+        if (state === "playing") {
+            // move && remove food
+            for (var i = 0; i < stage.children.length; ++i)
+                if (stage.children[i].name === "food") {
+                    if (stage.children[i].y > 1350) {
+                        stage.removeChildAt(i);
+                    }
+                    else {
+                        stage.children[i].y += stage.children[i].speed;
+                    }
+                }
+
+            // next food
+            nextFood -= 1;
+            if (nextFood < 0) {
+                console.log("length  " + stage.children.length);
+                nextFood = 50;
+                var t = ~~(Math.random() * 4);
+                console.log(t);
+                var foodType;
+                var newFood = Object.create(foodList[t]);
+                newFood.name = "food";
+                newFood.x = 50;
+                newFood.y = 50;
+                newFood.speed = ((Math.random() * 50) + 10) / scale;
+                newFood.regX = ~~(Math.random() * 500) - 500;
+                newFood.regY = 100;
+                newFood.on("click", function(){
+                    stage.removeChild(this);
+                    if (t == 3) {
+                        goToMenu();
+                    }
+                    totalPoint += this.point;
+                    console.log(this.point);
+                    totalPointDisplay.text = "总得分: " + totalPoint;
+                });
+                console.log(newFood.regX, newFood.regY)
+                var flag = 1;
+                stage.addChild(newFood);
+            }
+        }
+        stage.update();
+    });
+</script>
+</body>
+</html>
