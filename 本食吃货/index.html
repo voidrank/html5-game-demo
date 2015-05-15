@@ -1,4 +1,4 @@
-<!DOCTYPE html>;
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
     <title>本食的吃货</title>
     <script src="./bower_components/easeljs/lib/easeljs-0.8.0.min.js"></script>
     <script src="./bower_components/preloadjs/dist/preloadjs-0.6.0.min.js"></script>
+    <script src="./bower_components/fastclick/lib/fastclick.js"></script>
 </head>
 
 <body style="margin: 0px 0px 0px 0px;">
@@ -21,6 +22,7 @@
     var canvas = document.getElementById("gameStage");
     var designWidth = 750;
     var designHeight = 1270;
+
 
     // view area
     var viewWidth = document.documentElement.clientWidth < 750 ? document.documentElement.clientWidth : 750;
@@ -36,10 +38,12 @@
 
     // game
     var stage = new createjs.Stage(canvas);
+    createjs.Touch.enable(stage);
 
     // time
     var timeTotal = 0;
     var startTime = 0;
+
 
     // init
     goToMenu = function() {
@@ -50,9 +54,11 @@
         stage.addChild(startButton);
         stage.addChild(gameName);
         stage.addChild(gameIntroduction);
+
         state = "menu";
     };
-    // play
+
+
     goToPlay = function() {
 
         totalPoint = 0;
@@ -71,9 +77,8 @@
         state = "playing";
     };
 
-    goToSuspend = function() {
 
-        state = "suspend";
+    goToSuspend = function() {
 
         for (var i = 0; i < stage.children.length; ++i) {
 
@@ -90,12 +95,13 @@
             }
         }
 
-
         stage.addChild(continueButton);
         stage.addChild(menuBackground);
         stage.addChild(instructionDisplay);
 
+        state = "suspend";
     };
+
 
     goToContinue = function() {
 
@@ -118,6 +124,7 @@
 
         state = "playing";
     };
+
 
     goToFinish = function(totalScore) {
         state = "finish";
@@ -154,6 +161,8 @@
     // state:
     //      menu
     //      playing
+    //      suspend
+    //      finish
     var state = "menu";
 
 
@@ -165,6 +174,7 @@
     var finishBackground = new createjs.Bitmap("./finish-background.png");
     finishBackground.name = "finishBackground";
     finishBackground.y = -50;
+
 
     // text
     var gameName = new createjs.Text("本食的吃货", "bold 70px comic sans", "#ffffff");
@@ -206,11 +216,12 @@
     instructionDisplay.regY = 600;
     instructionDisplay.name = "instruction";
 
+
     // button
     var startButton = new createjs.Bitmap("./start.jpeg");
     startButton.x = 200;
     startButton.y = 900;
-    startButton.addEventListener("click", function () {
+    startButton.addEventListener('mousedown', function () {
         goToPlay();
     });
 
@@ -220,7 +231,7 @@
     suspendButton.y = 80;
     suspendButton.regX = 50;
     suspendButton.regY = 50;
-    suspendButton.addEventListener("click", function() {
+    suspendButton.addEventListener('mousedown', function() {
         goToSuspend();
     });
 
@@ -230,10 +241,9 @@
     continueButton.y = 80;
     continueButton.regX = -100;
     continueButton.regY = -1000;
-    continueButton.addEventListener("click", function() {
+    continueButton.addEventListener('mousedown', function() {
         goToContinue();
     });
-
 
 
     // food
@@ -259,6 +269,7 @@
 
 
     goToMenu();
+
 
     // game loop
     var nextFood = 0;
@@ -293,7 +304,6 @@
                     newFood.x = 50;
                     newFood.y = 50;
                     newFood.speed = ((Math.random() * 25) + 5);
-                    console.log(scale);
                     newFood.regX = ~~(Math.random() * 500) - 500;
                     newFood.regY = 100;
                     var that = newFood;
@@ -302,12 +312,12 @@
                         totalPoint += that.point;
                         refreshPointDisplay();
                     };
-                    newFood.addEventListener("click", click);
+                    newFood.addEventListener('mousedown', click);
                     newFood.disableClick = function() {
-                        that.removeEventListener('click', click);
+                        that.removeEventListener('mousedown', click);
                     };
                     newFood.enableClick = function() {
-                        that.addEventListener('click', click);
+                        that.addEventListener('mousedown', click);
                     };
 
                     // insert it to the stage
