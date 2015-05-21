@@ -11,7 +11,6 @@
     <title>本食的吃货</title>
     <script src="./bower_components/easeljs/lib/easeljs-0.8.0.min.js"></script>
     <script src="./bower_components/preloadjs/dist/preloadjs-0.6.0.min.js"></script>
-    <script src="./bower_components/fastclick/lib/fastclick.js"></script>
 </head>
 
 <body style="margin: 0px 0px 0px 0px;">
@@ -43,6 +42,18 @@
     // time
     var timeTotal = 0;
     var startTime = 0;
+
+
+    // pre
+    goToPre = function() {
+
+        stage.removeAllChildren();
+        stage.addChild(preBackground);
+        stage.addChild(enterButton);
+        stage.addChild(instructionDisplay);
+
+        state = "pre";
+    };
 
 
     // init
@@ -130,6 +141,7 @@
         state = "finish";
         stage.removeAllChildren();
         stage.addChild(finishBackground);
+        /*
         var level;
         if (totalScore >= 120)
             level = "A";
@@ -151,26 +163,33 @@
             level = "D"
         else
             level = "F"
-        var scoreDisplay = new createjs.Text("课程编号      成绩\n NO.1               " + level, "bold 70px comic sans", "#000000");
+        */
+        var scoreDisplay = new createjs.Text("课程编号      成绩\n NO.1             " + totalScore, "bold 70px comic sans", "#000000");
         scoreDisplay.x = 100;
         scoreDisplay.y = 450;
         stage.addChild(scoreDisplay);
-        stage.addChild(startButton);
-    }
+        stage.addChild(resumeButton);
+        stage.addChild(shareButton);
+    };
 
     // state:
     //      menu
     //      playing
     //      suspend
     //      finish
-    var state = "menu";
+    var state = "pre";
 
 
     // background
+    var preBackground = new createjs.Bitmap("./pre-background.png");
+    preBackground.name = "pre-background";
+
     var playingBackground = new createjs.Bitmap("./playing-background.png");
     playingBackground.name = "playing-background";
+
     var menuBackground = new createjs.Bitmap("./menu-background.png");
     menuBackground.name = "menu-background";
+
     var finishBackground = new createjs.Bitmap("./finish-background.png");
     finishBackground.name = "finishBackground";
     finishBackground.y = -50;
@@ -184,25 +203,30 @@
     gameName.regY = -150;
     gameName.textBaseline = "alphabetic";
 
-    var gameIntroduction = new createjs.Text("忙碌了一天的柏世澹，急需到旦苑获取\n" +
-            "油炸芒果的能量!师傅会从食堂窗口\n" +
-            "抛出菜品，接住饭菜才有的吃哦!!!\n" +
-            "但可不是所有的菜品你都喜欢，辣椒\n" +
-            "一定要躲过去！好食物的分数也不相\n" +
-            "同哦，油炸芒果=5分，大块肉=3分，\n" + "" +
-            "大排=2分,辣椒扣5分，尽量接到多多\n" + "" +
-            "的好食物吧~", "bold 40px comic sans", "#ffffff");
+    var gameIntroduction = new createjs.Text(
+            "30s内点击屏幕中的旦苑食物获得相应\n分数：\n\n\n" +
+            "     油炸芒果获得5分；大块肉获得3分；\n\n" +
+            "     大排获得2分；辣椒倒扣2分  \n",
+            "bold 40px comic sans", "#ffffff");
     gameIntroduction.x = 25;
     gameIntroduction.y = 300;
 
-    var timeDisplay = new createjs.Text("test", "bold 70px comic sans", "#000000");
-    timeDisplay.x = 100;
-    timeDisplay.y = 80;
-    timeDisplay.regX = -500;
-    timeDisplay.regY = 70;
+    var timeDisplay = new createjs.Text("test", "bold 70px comic sans", "#e2ff12");
+    timeDisplay.x = 50;
+    timeDisplay.y = 885;
 
-    var instructionDisplay = new createjs.Text("旦苑名片 :本部食堂紧邻光华楼东主楼\n，是我旦学子最为熟悉和喜爱的食堂之\n一。本部食堂共有三层，一楼有原校党\n委书记秦绍德教授题写的“随缘”二字。\n二楼的清真餐厅也是颇具特色，据称，\n清真餐厅所用的牛、羊肉等食材皆是从\n银川空运而来。三楼的教授餐厅也为大\n型活动的开展、院系接待、师生宴请等\n需求提供了理想的场所。\
-    旦苑餐厅\n提供WIFI服务，为我校学子提供了极\n大地便利。同时，各类菜品，应有尽有\n，早饭、中饭、晚饭、甚至夜宵都能在\n这里找到各自的归宿。", "bold 40px comic sans", "#ffffff");
+    var instructionDisplay = new createjs.Text(
+        "旦苑的吃货\n\n" +
+        "说到复旦学子的“吃”，不得不提及本\n" +
+        "食旦苑.本部食堂名为“旦苑”，紧邻\n" +
+        "光华楼东主楼，是我旦学子最为熟悉\n" +
+        "和喜爱的食堂之一，全覆盖WIFI，为\n" +
+        "我校学子提供了极大地便利。同时，\n" +
+        "各类菜品，应有尽有，永远爆满的\n" +
+        "清真食堂是新增亮点，油炸芒果\n" +
+        "大块肉也是旦苑的“明星产品”。\n\n" +
+        "想体验在食堂吃饭的愉悦吗？\n快进入游戏填饱肚子吧~", "bold 40px comic sans", "#eeeeee");
+    instructionDisplay.y = -100;
 
     var totalPoint = 0;
     var totalPointDisplay = new createjs.Text("总得分: 0", "bold 50px comic sans", "#eeeeee");
@@ -218,6 +242,13 @@
 
 
     // button
+    var enterButton = new createjs.Bitmap("./enter.png");
+    enterButton.x = 200;
+    enterButton.y = 900;
+    enterButton.addEventListener("mousedown", function() {
+        goToMenu();
+    });
+
     var startButton = new createjs.Bitmap("./start.jpeg");
     startButton.x = 200;
     startButton.y = 900;
@@ -245,6 +276,18 @@
         goToContinue();
     });
 
+    var resumeButton = new createjs.Bitmap("./resume.png");
+    resumeButton.name = "continue";
+    resumeButton.x = 200;
+    resumeButton.y = 900;
+    resumeButton.addEventListener("mousedown", function() {
+        goToMenu();
+    });
+
+    var shareButton = new createjs.Bitmap("./WeChatShare.png");
+    shareButton.x = 250;
+    shareButton.y = 850;
+
 
     // food
     var foodList = [
@@ -268,7 +311,7 @@
     };
 
 
-    goToMenu();
+    goToPre();
 
 
     // game loop
@@ -293,17 +336,18 @@
             // next food
             nextFood -= 1;
             if (nextFood < 0) {
-                nextFood = 5;
+                nextFood = 10;
 
                 // create a food
                 ((function() {
-                    var t = ~~(Math.random() * 4);
+                    var t = ~~(Math.random() * 7);
+                    if (t > 3) t = 3;
                     var foodType;
                     var newFood = Object.create(foodList[t]);
                     newFood.name = "food";
                     newFood.x = 50;
                     newFood.y = 50;
-                    newFood.speed = ((Math.random() * 25) + 5);
+                    newFood.speed = ((Math.random() * 40) + 10);
                     newFood.regX = ~~(Math.random() * 500) - 500;
                     newFood.regY = 100;
                     var that = newFood;
