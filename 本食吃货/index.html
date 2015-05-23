@@ -234,13 +234,15 @@
     var shareText = new createjs.Text(
             "来旦苑刷出你的分数,\n" +
             "截朋友圈成绩分享画面，\n发至团团在复旦\n(微信公众号fudangongqingtuan)\n" +
-            "得分前十名将获得精美校庆礼品哦~\n",
-            "36px comic snas",
+            "得分前十名将获得精美校庆礼品哦~\n" +
+            "欢迎关注复旦学生网机器人\n" +
+            "微信公众号: STUrobot",
+            "20px comic snas",
             "#000000"
     );
     shareText.x = 100;
     shareText.y = 780;
-    shareText.lineHeight = 50;
+    shareText.lineHeight = 30;
 
     var introductionDisplay = new createjs.Text(
         "说到复旦学子的“吃”，不得不提及本\n" +
@@ -408,7 +410,7 @@
 
             // finish
             // finish time 30s
-            if (timeTotal >= 30000) {
+            if (timeTotal >= 3) {
                 goToFinish(totalPoint);
             }
         }
